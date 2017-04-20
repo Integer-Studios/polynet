@@ -13,8 +13,4 @@ public class PolyNetIdentity : MonoBehaviour {
 		chunk = PolyNetWorld.linkChunk (this);
 	}
 
-	public void onPlayerEnteredChunk() {
-		chunk.sendPacket (new PacketObjectSpawn (this));
-	}
-
 }

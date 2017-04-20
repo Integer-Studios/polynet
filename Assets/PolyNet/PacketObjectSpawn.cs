@@ -32,7 +32,7 @@ public class PacketObjectSpawn : Packet {
 		scale = new Vector3 ((float)reader.ReadDecimal (), (float)reader.ReadDecimal (), (float)reader.ReadDecimal ());
 		euler = new Vector3 ((float)reader.ReadDecimal (), (float)reader.ReadDecimal (), (float)reader.ReadDecimal ());
 
-		PolyNetWorld.clientSpawnObject (prefabId, instanceId, position, scale, euler);
+		PolyNetWorld.spawnObject (prefabId, instanceId, position, scale, euler);
 	}
 
 	public override void write(ref BinaryWriter writer) {

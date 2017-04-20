@@ -24,13 +24,18 @@ public class PolyNetChunk {
 
 	public void addPlayer(PolyNetPlayer i) {
 		players.Add (i);
+		PolyNetPlayer[] rec = new PolyNetPlayer[]{ i };
 		foreach(PolyNetIdentity o in objects) {
-			o.onPlayerEnteredChunk();
+			PacketHandler.queuePacket (new PacketObjectSpawn (o), rec);
 		}
 	}
 
 	public void removePlayer(PolyNetPlayer i) {
 		players.Remove (i);
+		PolyNetPlayer[] rec = new PolyNetPlayer[]{ i };
+		foreach(PolyNetIdentity o in objects) {
+			PacketHandler.queuePacket (new PacketObjectDespawn (o), rec);
+		}
 	}
 
 	public void sendPacket(Packet p) {

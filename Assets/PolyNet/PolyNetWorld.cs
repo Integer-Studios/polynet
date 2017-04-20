@@ -7,7 +7,7 @@ public class PolyNetWorld {
 	private static Dictionary<int, GameObject> prefabs = new Dictionary<int, GameObject>();
 	private static Dictionary<int, PolyNetIdentity> objects = new Dictionary<int, PolyNetIdentity>();
 	public static Dictionary<ChunkIndex, PolyNetChunk> chunks = new Dictionary<ChunkIndex, PolyNetChunk>();
-	private static float chunkSize = 50f;
+	private static float chunkSize = 10f;
 
 	public static void initialize() {
 		ripPrefabs ();
@@ -40,10 +40,22 @@ public class PolyNetWorld {
 
 	public static void addPlayerTemp(PolyNetPlayer p) {
 		PolyNetChunk chunk;
-		if (chunks.TryGetValue (new ChunkIndex (0, 0), out chunk)) {
+		if (chunks.TryGetValue (new ChunkIndex (Random.Range(0,2), Random.Range(0,2)), out chunk)) {
 			chunk.addPlayer (p);
+//			GameObject.FindObjectOfType<PrefabRegistry>().StartCoroutine (fakeMove (p));
 		}
 	}
+
+//	private static IEnumerator fakeMove(PolyNetPlayer p) {
+//		yield return new WaitForSeconds(5f);
+//		PolyNetChunk chunk;
+//		if (chunks.TryGetValue (new ChunkIndex (0, 0), out chunk)) {
+//			chunk.removePlayer (p);
+//			if (chunks.TryGetValue (new ChunkIndex (1, 0), out chunk)) {
+//				chunk.addPlayer (p);
+//			}
+//		}
+//	}
 
 	public static ChunkIndex getChunkIndex(Vector3 position) {
 		return new ChunkIndex ((int)(position.x / chunkSize), (int)(position.z / chunkSize));
@@ -56,7 +68,7 @@ public class PolyNetWorld {
 		}
 	}
 
-	public static void clientSpawnObject(int prefabId, int instanceId, Vector3 p, Vector3 s, Vector3 e) {
+	public static void spawnObject(int prefabId, int instanceId, Vector3 p, Vector3 s, Vector3 e) {
 		GameObject prefab;
 		if (prefabs.TryGetValue (prefabId, out prefab)) {
 			GameObject instance = GameObject.Instantiate (prefab);
@@ -68,6 +80,15 @@ public class PolyNetWorld {
 			objects.Add (instanceId, identity);
 		} else {
 			Debug.Log ("Object spawn error: prefab not found for id: " + prefabId + ", ignoring spawn.");
+		}
+	}
+
+	public static void despawnObject(int instanceId) {
+		PolyNetIdentity obj;
+		if (objects.TryGetValue(instanceId, out obj)) {
+			GameObject.Destroy (obj.gameObject);
+		} else {
+			Debug.Log ("Object despawn error: instance not found for id: " + instanceId + ", ignoring despawn.");
 		}
 	}
 
