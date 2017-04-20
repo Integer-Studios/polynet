@@ -11,19 +11,23 @@ public class Packet {
 	public Packet() {
 		id = -1;
 	}
-	//switch to binary reader/writer ref's
-	public void read(ref BinaryReader reader) {
-		Debug.Log(reader.ReadString ());
-		Debug.Log(reader.ReadInt32 ());
-		Debug.Log(reader.ReadDecimal());
-		Debug.Log(reader.ReadBoolean());
+	public virtual void read(ref BinaryReader reader, PolyNetPlayer sender) {
 	}
 
-	public void write(ref BinaryWriter writer) {
-		writer.Write ("test");
-		writer.Write (12);
-		writer.Write ((decimal)32.5f);
-		writer.Write (true);
+	public virtual void write(ref BinaryWriter writer) {
+	}
+
+	public static Packet getPacket(int id) {
+		switch (id) {
+		case -1:
+			return new Packet ();
+		case 0:
+			return new PacketObjectSpawn ();
+		case 1:
+			return new PacketBehaviour ();
+		default:
+			return null;
+		}
 	}
 
 }

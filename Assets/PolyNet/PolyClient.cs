@@ -49,11 +49,12 @@ public class PolyClient {
 	}
 
 	private static void onRecieveMessage(byte[] buffer) {
-		PacketHandler.clientHandlePacket (buffer);
+		PacketHandler.handlePacket (buffer, null);
 	}
 
 	private static void onConnect() {
 		Debug.Log ("Connected to Server");
+		PacketHandler.queuePacket (new Packet (), null);
 	}
 
 	private static void onDisconnect() {

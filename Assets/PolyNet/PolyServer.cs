@@ -55,20 +55,21 @@ public class PolyServer {
 	}
 
 	private static void onRecieveMessage(byte[] buffer, PolyNetPlayer player) {
-		PacketHandler.serverHandlePacket (buffer, player);
+		PacketHandler.handlePacket (buffer, player);
 	}
 
 	private static void onConnect(PolyNetPlayer p) {
 		Debug.Log ("Player connected with ID: " + p.connectionId);
 		players.Add (p.connectionId, p);
-		PacketHandler.queuePacket (new Packet (), new PolyNetPlayer[]{p});
+		PolyNetWorld.addPlayerTemp (p);
 	}
 
 	private static void onDisconnect(PolyNetPlayer p) {
+		players.Remove (p.connectionId);
 		Debug.Log ("Player Disconnected with id: " + p.connectionId);
 	}
 
 	private static void playerNotFoundException(int connectionID) {
-		Debug.Log ("No Player found for connection ID: " + connectionID + " ignoring packet...");
+		Debug.Log ("No Player found for connection ID: " + connectionID + " ignoring data...");
 	}
 }

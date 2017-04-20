@@ -17,6 +17,8 @@ public class PolyNetManager : MonoBehaviour {
 		else
 			PolyServer.start (serverPort);
 
+		PolyNetWorld.initialize ();
+
 		StartCoroutine (socketListenerUpdate ());
 		StartCoroutine (packetWriterUpdate ());
 	}

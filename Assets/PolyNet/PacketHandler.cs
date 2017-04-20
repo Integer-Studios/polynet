@@ -8,7 +8,6 @@ public class PacketHandler {
 	private static List<PacketEntry> packetQueue = new List<PacketEntry>();
 
 	public static void queuePacket(Packet p, PolyNetPlayer[] r) {
-		Debug.Log ("packet added to queue");
 		packetQueue.Add (new PacketEntry(p, r));
 	}
 
@@ -30,35 +29,15 @@ public class PacketHandler {
 		PolyClient.sendMessage (buffer);
 	}
 
-	public static void serverHandlePacket(byte[] buffer, PolyNetPlayer player) {
+	public static void handlePacket(byte[] buffer, PolyNetPlayer player) {
 		MemoryStream stream = new MemoryStream (buffer);
 		BinaryReader reader = new BinaryReader (stream);
 		int id = reader.ReadInt32 ();
-		switch (id) {
-		case -1:
-			Packet p = new Packet ();
-			p.read (ref reader);
-			break;
-		default:
+		Packet p = Packet.getPacket (id);
+		if (p == null)
 			Debug.Log ("Unknown packet id: " + id);
-			break;
-		}
-	}
-
-	public static void clientHandlePacket(byte[] buffer) {
-		MemoryStream stream = new MemoryStream (buffer);
-		BinaryReader reader = new BinaryReader (stream);
-		int id = reader.ReadInt32 ();
-		switch (id) {
-		case -1:
-			Packet p = new Packet ();
-			p.read (ref reader);
-			Debug.Log ("and its over");
-			break;
-		default:
-			Debug.Log ("Unknown packet id: " + id);
-			break;
-		}
+		else
+			p.read (ref reader, player);
 	}
 
 	private static void deliverPacketEntry(PacketEntry entry) {
