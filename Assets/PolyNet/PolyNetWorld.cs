@@ -7,7 +7,7 @@ public class PolyNetWorld {
 	private static Dictionary<int, GameObject> prefabs = new Dictionary<int, GameObject>();
 	private static Dictionary<int, PolyNetIdentity> objects = new Dictionary<int, PolyNetIdentity>();
 	public static Dictionary<ChunkIndex, PolyNetChunk> chunks = new Dictionary<ChunkIndex, PolyNetChunk>();
-	private static float chunkSize = 10f;
+	private static float chunkSize = 50f;
 
 	public static void initialize() {
 		ripPrefabs ();
@@ -58,7 +58,7 @@ public class PolyNetWorld {
 //	}
 
 	public static ChunkIndex getChunkIndex(Vector3 position) {
-		return new ChunkIndex ((int)(position.x / chunkSize), (int)(position.z / chunkSize));
+		return new ChunkIndex ((int)Mathf.Floor(position.x / chunkSize), (int)Mathf.Floor(position.z / chunkSize));
 	}
 
 	public static void ripPrefabs() {
