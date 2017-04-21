@@ -5,30 +5,31 @@ using System.IO;
 
 public class PacketBehaviour : Packet {
 
-	public int chunkId;
 	public int instanceId;
 	public int scriptId;
-	public int commandId;
 
 	public PacketBehaviour() {
 		id = 1;
 	}
 
+	public PacketBehaviour(PolyNetBehaviour b) {
+		id = 1;
+		instanceId = b.identity.instanceId;
+		scriptId = b.scriptId;
+	}
+
 	public override void read(ref BinaryReader reader, PolyNetPlayer sender) {
-		chunkId = reader.ReadInt32 ();
 		instanceId = reader.ReadInt32 ();
 		scriptId = reader.ReadInt32 ();
-		commandId = reader.ReadInt32 ();
+		routeToBehaviour ();
 	}
 
 	public override void write(ref BinaryWriter writer) {
-		writer.Write (chunkId);
 		writer.Write (instanceId);
 		writer.Write (scriptId);
-		writer.Write (commandId);
 	}
 
-	public static void routeToBehaviour(PacketBehaviour p) {
+	public void routeToBehaviour() {
 		//find chunk
 		//give it the packet
 		//it finds the instance
@@ -37,5 +38,10 @@ public class PacketBehaviour : Packet {
 		//give it the id
 		//it finds the command
 		//calls it
+
+		PolyNetIdentity i = PolyNetWorld.getObject (instanceId);
+		if (i != null) {
+			i.routeBehaviourPacket (this);
+		}
 	}
 }

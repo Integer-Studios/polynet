@@ -25,6 +25,8 @@ public class Packet {
 			return new PacketObjectSpawn ();
 		case 1:
 			return new PacketObjectDespawn ();
+		case 2:
+			return new PacketTransform ();
 		default:
 			return null;
 		}

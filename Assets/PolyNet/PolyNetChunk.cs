@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class PolyNetChunk {
 
@@ -20,6 +21,11 @@ public class PolyNetChunk {
 
 	public void removeObject(PolyNetIdentity i) {
 		objects.Remove (i);
+	}
+
+	public void migrateChunk(PolyNetIdentity i, PolyNetChunk previous) {
+		PolyNetPlayer[] rec = previous.players.Except (players).ToArray ();
+		PacketHandler.queuePacket (new PacketObjectDespawn (i), rec);
 	}
 
 	public void addPlayer(PolyNetPlayer i) {
