@@ -38,9 +38,19 @@ public class PolyNetWorld {
 		return chunk;
 	}
 
+	public static PolyNetChunk migrateChunk(PolyNetIdentity i, PolyNetChunk c) {
+		c.removeObject (i);
+		PolyNetChunk n = linkChunk (i);
+		n.migrateChunk (i, c);
+		return n;
+	}
+
 	public static void addPlayerTemp(PolyNetPlayer p) {
 		PolyNetChunk chunk;
-		if (chunks.TryGetValue (new ChunkIndex (Random.Range(0,2), Random.Range(0,2)), out chunk)) {
+//		foreach (PolyNetChunk c in chunks.Values) {
+//			c.addPlayer (p);
+//		}
+		if (chunks.TryGetValue (new ChunkIndex (0, 0), out chunk)) {
 			chunk.addPlayer (p);
 //			GameObject.FindObjectOfType<PrefabRegistry>().StartCoroutine (fakeMove (p));
 		}
@@ -66,6 +76,15 @@ public class PolyNetWorld {
 		foreach (PolyNetIdentity g in registry.prefabs) {
 			prefabs.Add (g.prefabId, g.gameObject);
 		}
+	}
+
+	public static PolyNetIdentity getObject(int instanceId) {
+		PolyNetIdentity i;
+		if (objects.TryGetValue (instanceId, out i))
+			return i;
+		else
+			return null;
+		
 	}
 
 	public static void spawnObject(int prefabId, int instanceId, Vector3 p, Vector3 s, Vector3 e) {
@@ -102,11 +121,23 @@ public class PolyNetWorld {
 
 }
 
-public struct ChunkIndex {
+public class ChunkIndex {
 	public int x;
 	public int z;
 	public ChunkIndex(int ix, int iz) {
 		x = ix;
 		z = iz;
+	}
+	public override bool Equals(object obj) {
+		ChunkIndex item = (ChunkIndex)obj;
+		if (item == null) {
+			return false;
+		}
+
+		return x == item.x && z == item.z;
+	}
+
+	public override int GetHashCode() {
+		return x ^ z;
 	}
 }

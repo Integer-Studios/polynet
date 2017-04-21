@@ -29,22 +29,15 @@ public class PolyNetManager : MonoBehaviour {
 				PolyClient.update ();
 			else
 				PolyServer.update ();
-			yield return null;
+			yield return new WaitForSeconds(0f);
 		}
 	}
 
 	private IEnumerator packetWriterUpdate() {
 		while (true) {
 			PacketHandler.update ();
-			yield return null;
+			yield return new WaitForSeconds(0f);
 		}
-	}
-
-	void Update () {
-		if (isClient)
-			PolyClient.update ();
-		else
-			PolyServer.update ();
 	}
 
 }

@@ -14,6 +14,7 @@ public class PacketHandler {
 	public static void update() {
 		PacketEntry[] packets = packetQueue.ToArray ();
 		packetQueue.Clear ();
+
 		foreach (PacketEntry entry in packets) {
 			deliverPacketEntry (entry);
 		}
