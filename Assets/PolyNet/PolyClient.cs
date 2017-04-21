@@ -7,7 +7,7 @@ public class PolyClient {
 
 	public static int port;
 	public static bool isActive = false;
-	private static int reliableChannelId, socketId, connectionId;
+	public static int reliableChannelId, socketId, connectionId;
 
 	public static void start (int cPort, int sPort, string sAddress) {
 		port = cPort;
@@ -54,6 +54,7 @@ public class PolyClient {
 
 	private static void onConnect() {
 		Debug.Log ("Connected to Server");
+		PacketHandler.queuePacket (new PacketLogin (1), null);
 	}
 
 	private static void onDisconnect() {

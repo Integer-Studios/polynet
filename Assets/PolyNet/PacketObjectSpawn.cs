@@ -7,6 +7,7 @@ public class PacketObjectSpawn : Packet {
 
 	public int prefabId;
 	public int instanceId;
+	public int ownerConnectionId;
 	public Vector3 position;
 	public Vector3 scale;
 	public Vector3 euler;
@@ -19,6 +20,10 @@ public class PacketObjectSpawn : Packet {
 		id = 0;
 		prefabId = i.prefabId;
 		instanceId = i.instanceId;
+		if (i.owner != null)
+			ownerConnectionId = i.owner.connectionId;
+		else
+			ownerConnectionId = -1;
 		position = i.transform.position;
 		scale = i.transform.localScale;
 		euler = i.transform.eulerAngles;
@@ -27,17 +32,19 @@ public class PacketObjectSpawn : Packet {
 	public override void read(ref BinaryReader reader, PolyNetPlayer sender) {
 		prefabId = reader.ReadInt32 ();
 		instanceId = reader.ReadInt32 ();
+		ownerConnectionId = reader.ReadInt32 ();
 
 		position = new Vector3 ((float)reader.ReadDecimal (), (float)reader.ReadDecimal (), (float)reader.ReadDecimal ());
 		scale = new Vector3 ((float)reader.ReadDecimal (), (float)reader.ReadDecimal (), (float)reader.ReadDecimal ());
 		euler = new Vector3 ((float)reader.ReadDecimal (), (float)reader.ReadDecimal (), (float)reader.ReadDecimal ());
 
-		PolyNetWorld.spawnObject (prefabId, instanceId, position, scale, euler);
+		PolyNetWorld.spawnObject (prefabId, instanceId, ownerConnectionId, position, scale, euler);
 	}
 
 	public override void write(ref BinaryWriter writer) {
 		writer.Write (prefabId);
 		writer.Write (instanceId);
+		writer.Write (ownerConnectionId);
 
 		writer.Write ((decimal)position.x);
 		writer.Write ((decimal)position.y);

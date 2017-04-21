@@ -19,14 +19,14 @@ public class Packet {
 
 	public static Packet getPacket(int id) {
 		switch (id) {
-		case -1:
-			return new Packet ();
 		case 0:
 			return new PacketObjectSpawn ();
 		case 1:
 			return new PacketObjectDespawn ();
 		case 2:
 			return new PacketTransform ();
+		case 3:
+			return new PacketLogin ();
 		default:
 			return null;
 		}

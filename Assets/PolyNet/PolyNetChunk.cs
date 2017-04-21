@@ -15,16 +15,31 @@ public class PolyNetChunk {
 		players = new List<PolyNetPlayer> ();
 	}
 
-	public void addObject(PolyNetIdentity i) {
+	private void addObject(PolyNetIdentity i) {
 		objects.Add (i);
+		i.chunk = this;
 	}
 
-	public void removeObject(PolyNetIdentity i) {
+	private void removeObject(PolyNetIdentity i) {
 		objects.Remove (i);
+		i.chunk = null;
 	}
 
-	public void migrateChunk(PolyNetIdentity i, PolyNetChunk previous) {
-		PolyNetPlayer[] rec = previous.players.Except (players).ToArray ();
+	public void spawnObject(PolyNetIdentity i) {
+		addObject (i);
+		sendPacket (new PacketObjectSpawn (i));
+	}
+
+	public void despawnObject(PolyNetIdentity i) {
+		removeObject (i);
+		sendPacket (new PacketObjectDespawn (i));
+	}
+
+	public void migrateChunk(PolyNetIdentity i) {
+		PolyNetChunk newChunk = PolyNetWorld.getChunk(i.transform.position);
+		removeObject (i);
+		newChunk.addObject (i);
+		PolyNetPlayer[] rec = players.Except (newChunk.players).ToArray ();
 		PacketHandler.queuePacket (new PacketObjectDespawn (i), rec);
 	}
 

@@ -9,6 +9,9 @@ public class PolyNetManager : MonoBehaviour {
 	public int serverPort;
 	public int clientPort;
 	public bool isClient;
+	public float chunkSize;
+	public int chunkLoadRadius;
+	public PolyNetIdentity playerPrefab;
 
 	// Use this for initialization
 	void Start () {
@@ -17,7 +20,7 @@ public class PolyNetManager : MonoBehaviour {
 		else
 			PolyServer.start (serverPort);
 
-		PolyNetWorld.initialize ();
+		PolyNetWorld.initialize (chunkSize, chunkLoadRadius, playerPrefab);
 
 		StartCoroutine (socketListenerUpdate ());
 		StartCoroutine (packetWriterUpdate ());

@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class PolyNetIdentity : PolyNetBehaviour {
 
-	private PolyNetChunk chunk;
+	public PolyNetChunk chunk;
+	public PolyNetPlayer owner;
 	public int prefabId;
 	public int instanceId;
 	public bool isStatic = true;
+	public bool isLocalPlayer = false;
 	public Dictionary<int, PolyNetBehaviour> behaviours;
 
 	public void initialize (int i) {
 		instanceId = i;
-		chunk = PolyNetWorld.linkChunk (this);
 	}
 
 	public void routeBehaviourPacket(PacketBehaviour p) {
@@ -26,7 +27,7 @@ public class PolyNetIdentity : PolyNetBehaviour {
 	public void sendBehaviourPacket(PacketBehaviour p) {
 		chunk.sendPacket (p);
 	}
-
+		
 	private void Start() {
 		behaviours = new Dictionary<int,PolyNetBehaviour> ();
 		int nextId = 0;
@@ -41,9 +42,13 @@ public class PolyNetIdentity : PolyNetBehaviour {
 	private void Update() {
 		if (isStatic || !PolyServer.isActive)
 			return;
-		//		TODO check if this works (ironic)
+		if (owner != null)
+			owner.position = transform.position;
+		
 		if (PolyNetWorld.getChunkIndex (transform.position).x != chunk.index.x || PolyNetWorld.getChunkIndex (transform.position).z != chunk.index.z) {
-			chunk = PolyNetWorld.migrateChunk (this, chunk);
+			chunk.migrateChunk (this);
+			if (owner != null)
+				owner.refreshLoadedChunks ();
 		}
 	}
 
