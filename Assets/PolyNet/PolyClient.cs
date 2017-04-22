@@ -7,7 +7,7 @@ public class PolyClient {
 
 	public static int port;
 	public static bool isActive = false;
-	public static int reliableChannelId, socketId, connectionId;
+	private static int reliableChannelId, socketId, connectionId;
 
 	public static void start (int cPort, int sPort, string sAddress) {
 		port = cPort;
@@ -49,12 +49,13 @@ public class PolyClient {
 	}
 
 	private static void onRecieveMessage(byte[] buffer) {
+		Debug.Log (connectionId);
 		PacketHandler.handlePacket (buffer, null);
 	}
 
 	private static void onConnect() {
 		Debug.Log ("Connected to Server");
-		PacketHandler.queuePacket (new PacketLogin (1), null);
+		PacketHandler.queuePacket (new PacketLogin (GameObject.FindObjectOfType<PolyNetManager>().playerId), null);
 	}
 
 	private static void onDisconnect() {

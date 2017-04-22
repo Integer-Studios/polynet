@@ -30,15 +30,6 @@ public class PacketBehaviour : Packet {
 	}
 
 	public void routeToBehaviour() {
-		//find chunk
-		//give it the packet
-		//it finds the instance
-		//give it the packet
-		//it finds the script
-		//give it the id
-		//it finds the command
-		//calls it
-
 		PolyNetIdentity i = PolyNetWorld.getObject (instanceId);
 		if (i != null) {
 			i.routeBehaviourPacket (this);

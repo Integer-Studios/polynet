@@ -91,14 +91,16 @@ public class PolyNetWorld {
 	public static void spawnObject(PolyNetIdentity i) {
 		i.initialize (nextInstanceId);
 		getChunk (i.transform.position).spawnObject (i);
+		objects.Add (nextInstanceId, i);
 		nextInstanceId++;
 	}
 
 	public static void despawnObject(PolyNetIdentity i) {
 		getChunk (i.transform.position).despawnObject (i);
+		objects.Remove (i.instanceId);
 	}
 
-	public static void spawnObject(int prefabId, int instanceId, int ownerConnectionId, Vector3 p, Vector3 s, Vector3 e) {
+	public static void spawnObject(int prefabId, int instanceId, int ownerPlayerId, Vector3 p, Vector3 s, Vector3 e) {
 		GameObject prefab;
 		if (prefabs.TryGetValue (prefabId, out prefab)) {
 			GameObject instance = GameObject.Instantiate (prefab);
@@ -107,7 +109,7 @@ public class PolyNetWorld {
 			instance.transform.eulerAngles = e;
 			PolyNetIdentity identity = instance.GetComponent<PolyNetIdentity> ();
 			identity.instanceId = instanceId;
-			if (ownerConnectionId == PolyClient.connectionId)
+			if (ownerPlayerId == GameObject.FindObjectOfType<PolyNetManager>().playerId)
 				identity.isLocalPlayer = true;
 			objects.Add (instanceId, identity);
 		} else {
@@ -119,6 +121,7 @@ public class PolyNetWorld {
 		PolyNetIdentity obj;
 		if (objects.TryGetValue(instanceId, out obj)) {
 			GameObject.Destroy (obj.gameObject);
+			objects.Remove (instanceId);
 		} else {
 			Debug.Log ("Object despawn error: instance not found for id: " + instanceId + ", ignoring despawn.");
 		}

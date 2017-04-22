@@ -25,10 +25,13 @@ public class PolyNetIdentity : PolyNetBehaviour {
 	}
 
 	public void sendBehaviourPacket(PacketBehaviour p) {
-		chunk.sendPacket (p);
+		if (PolyServer.isActive)
+			chunk.sendPacket (p);
+		else
+			PacketHandler.queuePacket (p, null);
 	}
 		
-	private void Start() {
+	private void Awake() {
 		behaviours = new Dictionary<int,PolyNetBehaviour> ();
 		int nextId = 0;
 		foreach (PolyNetBehaviour b in GetComponents<PolyNetBehaviour>()) {
