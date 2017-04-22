@@ -38,7 +38,14 @@ public class PolyNetWorld {
 		g.transform.position = p.position;
 		PolyNetIdentity i = g.GetComponent<PolyNetIdentity> ();
 		i.owner = p;
+		p.identity = i;
 		spawnObject (i);
+	}
+
+	public static void removePlayer(PolyNetPlayer p) {
+		p.unloadChunks ();
+		despawnObject (p.identity);
+		GameObject.Destroy (p.identity.gameObject);
 	}
 
 	public static ChunkIndex getChunkIndex(Vector3 position) {

@@ -89,7 +89,9 @@ public class PolyServer {
 	}
 
 	private static void onDisconnect(PolyNetPlayer p) {
+		PolyNetWorld.removePlayer (p);
 		players.Remove (p.connectionId);
+		playerIdMap.Remove (p.playerId);
 		Debug.Log ("Player Disconnected with connection ID: " + p.connectionId);
 	}
 

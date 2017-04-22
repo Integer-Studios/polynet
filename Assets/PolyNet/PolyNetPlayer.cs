@@ -9,6 +9,7 @@ public class PolyNetPlayer {
 	public int playerId;
 	public Vector3 position;
 	public List<PolyNetChunk> loadedChunks;
+	public PolyNetIdentity identity;
 
 	public PolyNetPlayer(int i) {
 		loadedChunks = new List<PolyNetChunk> ();
@@ -35,5 +36,11 @@ public class PolyNetPlayer {
 			}
 		}
 		loadedChunks = final;
+	}
+
+	public void unloadChunks() {
+		foreach (PolyNetChunk c in loadedChunks) {
+			c.removePlayer (this);
+		}
 	}
 }
