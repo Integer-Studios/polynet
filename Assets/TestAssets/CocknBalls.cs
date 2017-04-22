@@ -19,7 +19,8 @@ public class CocknBalls : PolyNetBehaviour {
 		if (!identity.isLocalPlayer)
 			return;
 		
-		transform.Translate (new Vector3 (5 * Time.deltaTime * Input.GetAxis("Horizontal"), 0, 5 * Time.deltaTime * Input.GetAxis("Vertical")));
+		transform.Translate (new Vector3 (0, 0, 10f * Time.deltaTime * Input.GetAxis("Vertical")));
+		transform.Rotate (new Vector3 (0, 10f * Time.deltaTime * Input.GetAxis("Horizontal"), 0f));
 	}
 
 	public IEnumerator networkTransform() {

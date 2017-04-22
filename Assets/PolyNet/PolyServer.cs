@@ -83,9 +83,7 @@ public class PolyServer {
 
 	private static void onConnect(PolyNetPlayer p) {
 		Debug.Log ("Player connected with connection ID: " + p.connectionId);
-		//request to node for player data
 		players.Add (p.connectionId, p);
-//		PolyNetWorld.addPlayerTemp (p);
 	}
 
 	private static void onDisconnect(PolyNetPlayer p) {

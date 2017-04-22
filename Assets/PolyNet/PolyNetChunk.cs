@@ -41,6 +41,8 @@ public class PolyNetChunk {
 		newChunk.addObject (i);
 		PolyNetPlayer[] rec = players.Except (newChunk.players).ToArray ();
 		PacketHandler.queuePacket (new PacketObjectDespawn (i), rec);
+		rec = newChunk.players.Except (players).ToArray ();
+		PacketHandler.queuePacket (new PacketObjectSpawn (i), rec);
 	}
 
 	public void addPlayer(PolyNetPlayer i) {
