@@ -6,7 +6,7 @@ public class PolyNetWorld {
 
 	private static Dictionary<int, GameObject> prefabs = new Dictionary<int, GameObject>();
 	private static Dictionary<int, PolyNetIdentity> objects = new Dictionary<int, PolyNetIdentity>();
-	public static Dictionary<ChunkIndex, PolyNetChunk> chunks = new Dictionary<ChunkIndex, PolyNetChunk>();
+	private static Dictionary<ChunkIndex, PolyNetChunk> chunks = new Dictionary<ChunkIndex, PolyNetChunk>();
 	private static float chunkSize;
 	private static int chunkLoadRadius;
 	private static int nextInstanceId = 0;
@@ -37,7 +37,7 @@ public class PolyNetWorld {
 		GameObject g = GameObject.Instantiate(playerPrefab.gameObject);
 		g.transform.position = p.position;
 		PolyNetIdentity i = g.GetComponent<PolyNetIdentity> ();
-		i.owner = p;
+		i.setOwner(p);
 		p.identity = i;
 		spawnObject (i);
 	}
@@ -118,7 +118,7 @@ public class PolyNetWorld {
 	public static void despawnObject(PolyNetIdentity i) {
 		if (PolyServer.isActive)
 			getChunk (i.transform.position).despawnObject (i);
-		objects.Remove (i.instanceId);
+		objects.Remove (i.getInstanceId());
 	}
 
 }

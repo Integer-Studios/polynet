@@ -11,7 +11,7 @@ public class PacketObjectSpawn : Packet {
 	public Vector3 position;
 	public Vector3 scale;
 	public Vector3 euler;
-	private PolyNetIdentity identity;
+	public PolyNetIdentity identity;
 
 	public PacketObjectSpawn() {
 		id = 0;
@@ -21,12 +21,8 @@ public class PacketObjectSpawn : Packet {
 		id = 0;
 		identity = i;
 		prefabId = i.prefabId;
-		instanceId = i.instanceId;
-		if (i.owner != null) {
-			ownerPlayerId = i.owner.playerId;
-		}
-		else
-			ownerPlayerId = -1;
+		instanceId = i.getInstanceId();
+		ownerPlayerId = i.getOwnerId ();
 		position = i.transform.position;
 		scale = i.transform.localScale;
 		euler = i.transform.eulerAngles;

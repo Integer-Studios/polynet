@@ -5,13 +5,14 @@ using System.IO;
 
 public class PolyNetIdentity : PolyNetBehaviour {
 
-	public PolyNetChunk chunk;
-	public PolyNetPlayer owner;
 	public int prefabId;
-	public int instanceId;
 	public bool isStatic = true;
 	public bool isLocalPlayer = false;
-	public Dictionary<int, PolyNetBehaviour> behaviours;
+
+	private PolyNetChunk chunk;
+	private PolyNetPlayer owner;
+	private int instanceId;
+	private Dictionary<int, PolyNetBehaviour> behaviours;
 
 	public void initialize (int i) {
 		instanceId = i;
@@ -21,8 +22,8 @@ public class PolyNetIdentity : PolyNetBehaviour {
 		behaviours = new Dictionary<int,PolyNetBehaviour> ();
 		int nextId = 0;
 		foreach (PolyNetBehaviour b in GetComponents<PolyNetBehaviour>()) {
-			b.scriptId = nextId;
-			b.identity = this;
+			b.setScriptId(nextId);
+			b.setIdentity(this);
 			behaviours.Add (nextId, b);
 			nextId++;
 		}
@@ -61,13 +62,32 @@ public class PolyNetIdentity : PolyNetBehaviour {
 		}
 	}
 
+	public int getOwnerId() {
+		if (owner != null)
+			return owner.playerId;
+		else
+			return -1;
+	}
+
+	public void setOwner(PolyNetPlayer o) {
+		owner = o;
+	}
+
+	public override int getInstanceId() {
+		return instanceId;
+	}
+		
+	public void setChunk(PolyNetChunk c) {
+		chunk = c;
+	}
+
 	private void Update() {
 		if (isStatic || !PolyServer.isActive)
 			return;
 		if (owner != null)
 			owner.position = transform.position;
-		
-		if (PolyNetWorld.getChunkIndex (transform.position).x != chunk.index.x || PolyNetWorld.getChunkIndex (transform.position).z != chunk.index.z) {
+
+		if (!chunk.inChunk(transform.position)) {
 			chunk.migrateChunk (this);
 			if (owner != null)
 				owner.refreshLoadedChunks ();

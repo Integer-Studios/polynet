@@ -14,8 +14,8 @@ public class PacketBehaviour : Packet {
 
 	public PacketBehaviour(PolyNetBehaviour b) {
 		id = 1;
-		instanceId = b.identity.instanceId;
-		scriptId = b.scriptId;
+		instanceId = b.getInstanceId();
+		scriptId = b.getScriptId();
 	}
 
 	public override void read(ref BinaryReader reader, PolyNetPlayer sender) {

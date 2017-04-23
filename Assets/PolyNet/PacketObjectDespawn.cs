@@ -13,7 +13,7 @@ public class PacketObjectDespawn : Packet {
 
 	public PacketObjectDespawn(PolyNetIdentity i) {
 		id = 1;
-		instanceId = i.instanceId;
+		instanceId = i.getInstanceId();
 	}
 
 	public override void read(ref BinaryReader reader, PolyNetPlayer sender) {

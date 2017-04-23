@@ -7,22 +7,12 @@ public class PolyNetChunk {
 
 	private List<PolyNetIdentity> objects;
 	private List<PolyNetPlayer> players;
-	public ChunkIndex index;
+	private ChunkIndex index;
 
 	public PolyNetChunk(ChunkIndex i) {
 		index = i;
 		objects = new List<PolyNetIdentity> ();
 		players = new List<PolyNetPlayer> ();
-	}
-
-	private void addObject(PolyNetIdentity i) {
-		objects.Add (i);
-		i.chunk = this;
-	}
-
-	private void removeObject(PolyNetIdentity i) {
-		objects.Remove (i);
-		i.chunk = null;
 	}
 
 	public void spawnObject(PolyNetIdentity i) {
@@ -63,6 +53,21 @@ public class PolyNetChunk {
 
 	public void sendPacket(Packet p) {
 		PacketHandler.queuePacket (p, players.ToArray());
+	}
+
+	public bool inChunk(Vector3 position) {
+		return (PolyNetWorld.getChunkIndex (position).x == index.x && PolyNetWorld.getChunkIndex (position).z == index.z);
+	}
+
+
+	private void addObject(PolyNetIdentity i) {
+		objects.Add (i);
+		i.setChunk(this);
+	}
+
+	private void removeObject(PolyNetIdentity i) {
+		objects.Remove (i);
+		i.setChunk(null);
 	}
 
 }

@@ -5,8 +5,24 @@ using System.IO;
 
 public class PolyNetBehaviour : MonoBehaviour {
 
-	public int scriptId;
-	public PolyNetIdentity identity;
+	private int scriptId;
+	protected PolyNetIdentity identity;
+
+	public virtual int getInstanceId() {
+		return identity.getInstanceId();
+	}
+
+	public int getScriptId() {
+		return scriptId;
+	}
+
+	public void setScriptId(int sid) {
+		scriptId = sid;
+	}
+
+	public void setIdentity(PolyNetIdentity i) {
+		identity = i;
+	}
 
 	public virtual void handleBehaviourPacket(PacketBehaviour p) {
 
