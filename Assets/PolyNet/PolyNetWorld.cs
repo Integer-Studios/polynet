@@ -6,7 +6,7 @@ public class PolyNetWorld {
 
 	private static Dictionary<int, GameObject> prefabs = new Dictionary<int, GameObject>();
 	private static Dictionary<int, PolyNetIdentity> objects = new Dictionary<int, PolyNetIdentity>();
-	public static Dictionary<ChunkIndex, PolyNetChunk> chunks = new Dictionary<ChunkIndex, PolyNetChunk>();
+	private static Dictionary<ChunkIndex, PolyNetChunk> chunks = new Dictionary<ChunkIndex, PolyNetChunk>();
 	private static float chunkSize;
 	private static int chunkLoadRadius;
 	private static int nextInstanceId = 0;
@@ -37,7 +37,7 @@ public class PolyNetWorld {
 		GameObject g = GameObject.Instantiate(playerPrefab.gameObject);
 		g.transform.position = p.position;
 		PolyNetIdentity i = g.GetComponent<PolyNetIdentity> ();
-		i.owner = p;
+		i.setOwner(p);
 		p.identity = i;
 		spawnObject (i);
 	}
@@ -87,6 +87,14 @@ public class PolyNetWorld {
 		}
 	}
 
+	public static GameObject getPrefab(int prefabId) {
+		GameObject i;
+		if (prefabs.TryGetValue (prefabId, out i))
+			return i;
+		else
+			return null;
+	}
+
 	public static PolyNetIdentity getObject(int instanceId) {
 		PolyNetIdentity i;
 		if (objects.TryGetValue (instanceId, out i))
@@ -96,50 +104,21 @@ public class PolyNetWorld {
 	}
 
 	public static void spawnObject(PolyNetIdentity i) {
-		i.initialize (nextInstanceId);
-		getChunk (i.transform.position).spawnObject (i);
-		objects.Add (nextInstanceId, i);
+		spawnObject (i, nextInstanceId);
 		nextInstanceId++;
 	}
 
+	public static void spawnObject(PolyNetIdentity i, int instanceId) {
+		i.initialize (instanceId);
+		if (PolyServer.isActive)
+			getChunk (i.transform.position).spawnObject (i);
+		objects.Add (instanceId, i);
+	}
+
 	public static void despawnObject(PolyNetIdentity i) {
-		getChunk (i.transform.position).despawnObject (i);
-		objects.Remove (i.instanceId);
-	}
-
-	public static void spawnObject(int prefabId, int instanceId, int ownerPlayerId, Vector3 p, Vector3 s, Vector3 e) {
-		GameObject prefab;
-		if (prefabs.TryGetValue (prefabId, out prefab)) {
-			GameObject instance = GameObject.Instantiate (prefab);
-			instance.transform.position = p;
-			instance.transform.localScale = s;
-			instance.transform.eulerAngles = e;
-			PolyNetIdentity identity = instance.GetComponent<PolyNetIdentity> ();
-			identity.instanceId = instanceId;
-			if (ownerPlayerId == GameObject.FindObjectOfType<PolyNetManager>().playerId)
-				identity.isLocalPlayer = true;
-			objects.Add (instanceId, identity);
-		} else {
-			Debug.Log ("Object spawn error: prefab not found for id: " + prefabId + ", ignoring spawn.");
-		}
-	}
-
-	public static void despawnObject(int instanceId) {
-		PolyNetIdentity obj;
-		if (objects.TryGetValue(instanceId, out obj)) {
-			GameObject.Destroy (obj.gameObject);
-			objects.Remove (instanceId);
-		} else {
-			Debug.Log ("Object despawn error: instance not found for id: " + instanceId + ", ignoring despawn.");
-		}
-	}
-
-	private static string convertPath(string path) {
-		int i1 = path.IndexOf ("Resources/");
-		i1 += 10;
-		int i2 = path.IndexOf (".");
-		int length = i2 - i1;
-		return path.Substring (i1, length);
+		if (PolyServer.isActive)
+			getChunk (i.transform.position).despawnObject (i);
+		objects.Remove (i.getInstanceId());
 	}
 
 }

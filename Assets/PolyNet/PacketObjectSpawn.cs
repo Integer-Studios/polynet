@@ -11,6 +11,7 @@ public class PacketObjectSpawn : Packet {
 	public Vector3 position;
 	public Vector3 scale;
 	public Vector3 euler;
+	public PolyNetIdentity identity;
 
 	public PacketObjectSpawn() {
 		id = 0;
@@ -18,13 +19,10 @@ public class PacketObjectSpawn : Packet {
 
 	public PacketObjectSpawn(PolyNetIdentity i) {
 		id = 0;
+		identity = i;
 		prefabId = i.prefabId;
-		instanceId = i.instanceId;
-		if (i.owner != null) {
-			ownerPlayerId = i.owner.playerId;
-		}
-		else
-			ownerPlayerId = -1;
+		instanceId = i.getInstanceId();
+		ownerPlayerId = i.getOwnerId ();
 		position = i.transform.position;
 		scale = i.transform.localScale;
 		euler = i.transform.eulerAngles;
@@ -39,7 +37,7 @@ public class PacketObjectSpawn : Packet {
 		scale = new Vector3 ((float)reader.ReadDecimal (), (float)reader.ReadDecimal (), (float)reader.ReadDecimal ());
 		euler = new Vector3 ((float)reader.ReadDecimal (), (float)reader.ReadDecimal (), (float)reader.ReadDecimal ());
 
-		PolyNetWorld.spawnObject (prefabId, instanceId, ownerPlayerId, position, scale, euler);
+		createObject (ref reader);
 	}
 
 	public override void write(ref BinaryWriter writer) {
@@ -58,6 +56,30 @@ public class PacketObjectSpawn : Packet {
 		writer.Write ((decimal)euler.x);
 		writer.Write ((decimal)euler.y);
 		writer.Write ((decimal)euler.z);
+
+		identity.writeSpawnData(ref writer);
+
+	}
+		
+	public void createObject(ref BinaryReader reader) {
+		GameObject prefab = PolyNetWorld.getPrefab(prefabId);
+		if (prefab != null) {
+			GameObject instance = GameObject.Instantiate (prefab);
+			instance.transform.position = position;
+			instance.transform.localScale = scale;
+			instance.transform.eulerAngles = euler;
+			identity = instance.GetComponent<PolyNetIdentity> ();
+			if (ownerPlayerId == GameObject.FindObjectOfType<PolyNetManager>().playerId)
+				identity.isLocalPlayer = true;
+
+			//read aux data
+			//ref reader
+			identity.readSpawnData(ref reader);
+
+			PolyNetWorld.spawnObject (identity, instanceId);
+		} else {
+			Debug.Log ("Object spawn error: prefab not found for id: " + prefabId + ", ignoring spawn.");
+		}
 	}
 
 }

@@ -5,8 +5,9 @@ using UnityEngine.Networking;
 
 public class PolyServer {
 
-	public static int port;
 	public static bool isActive = false;
+
+	private static int port;
 	private static int reliableChannelId, socketId;
 	private static Dictionary<int, PolyNetPlayer> players = new Dictionary<int, PolyNetPlayer> ();
 	private static Dictionary<int, int> playerIdMap = new Dictionary<int, int> ();
