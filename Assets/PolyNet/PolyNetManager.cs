@@ -21,10 +21,12 @@ public class PolyNetManager : MonoBehaviour {
 		else
 			PolyServer.start (serverPort);
 
-		PolyNetWorld.initialize (chunkSize, chunkLoadRadius, playerPrefab);
-
 		StartCoroutine (socketListenerUpdate ());
 		StartCoroutine (packetWriterUpdate ());
+	}
+
+	void Start() {
+		PolyNetWorld.initialize (chunkSize, chunkLoadRadius, playerPrefab);
 	}
 
 	private IEnumerator socketListenerUpdate() {

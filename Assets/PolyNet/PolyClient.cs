@@ -49,7 +49,6 @@ public class PolyClient {
 	}
 
 	private static void onRecieveMessage(byte[] buffer) {
-		Debug.Log (connectionId);
 		PacketHandler.handlePacket (buffer, null);
 	}
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class PolyNetIdentity : PolyNetBehaviour {
 
@@ -14,6 +15,17 @@ public class PolyNetIdentity : PolyNetBehaviour {
 
 	public void initialize (int i) {
 		instanceId = i;
+	}
+
+	public void Awake() {
+		behaviours = new Dictionary<int,PolyNetBehaviour> ();
+		int nextId = 0;
+		foreach (PolyNetBehaviour b in GetComponents<PolyNetBehaviour>()) {
+			b.scriptId = nextId;
+			b.identity = this;
+			behaviours.Add (nextId, b);
+			nextId++;
+		}
 	}
 
 	public void routeBehaviourPacket(PacketBehaviour p) {
@@ -30,15 +42,22 @@ public class PolyNetIdentity : PolyNetBehaviour {
 		else
 			PacketHandler.queuePacket (p, null);
 	}
-		
-	private void Awake() {
-		behaviours = new Dictionary<int,PolyNetBehaviour> ();
-		int nextId = 0;
-		foreach (PolyNetBehaviour b in GetComponents<PolyNetBehaviour>()) {
-			b.scriptId = nextId;
-			b.identity = this;
-			behaviours.Add (nextId, b);
-			nextId++;
+
+	public void writeSpawnData(ref BinaryWriter writer) {
+		PolyNetBehaviour b;
+		int i = 0;
+		while (behaviours.TryGetValue (i, out b)) {
+			b.writeBehaviourSpawnData (ref writer);
+			i++;
+		}
+	}
+
+	public void readSpawnData(ref BinaryReader reader) {
+		PolyNetBehaviour b;
+		int i = 0;
+		while (behaviours.TryGetValue (i, out b)) {
+			b.readBehaviourSpawnData (ref reader);
+			i++;
 		}
 	}
 
