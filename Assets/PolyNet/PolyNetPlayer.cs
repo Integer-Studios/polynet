@@ -3,44 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class PolyNetPlayer {
+namespace PolyNet {
 
-	public int connectionId;
-	public int playerId;
-	public Vector3 position;
-	public List<PolyNetChunk> loadedChunks;
-	public PolyNetIdentity identity;
+	public class PolyNetPlayer {
 
-	public PolyNetPlayer(int i) {
-		loadedChunks = new List<PolyNetChunk> ();
-		connectionId = i;
-	}
+		public int connectionId;
+		public int playerId;
+		public Vector3 position;
+		public List<PolyNetChunk> loadedChunks;
+		public PolyNetIdentity identity;
 
-	public void setData(Vector3 p) {
-		position = p;
-	}
-
-	public void refreshLoadedChunks() {
-		List<PolyNetChunk> newChunks = PolyNetWorld.getLoadedChunks (position);
-		List<PolyNetChunk> final = new List<PolyNetChunk>();
-		foreach (PolyNetChunk c in loadedChunks) {
-			if (!newChunks.Exists (j => j == c))
-				c.removePlayer (this);
-			else
-				final.Add (c);
+		public PolyNetPlayer(int i) {
+			loadedChunks = new List<PolyNetChunk> ();
+			connectionId = i;
 		}
-		foreach (PolyNetChunk c in newChunks) {
-			if (!loadedChunks.Exists (j => j == c)) {
-				c.addPlayer (this);
-				final.Add (c);
+
+		public void setData(Vector3 p) {
+			position = p;
+		}
+
+		public void refreshLoadedChunks() {
+			List<PolyNetChunk> newChunks = PolyNetWorld.getLoadedChunks (position);
+			List<PolyNetChunk> final = new List<PolyNetChunk>();
+			foreach (PolyNetChunk c in loadedChunks) {
+				if (!newChunks.Exists (j => j == c))
+					c.removePlayer (this);
+				else
+					final.Add (c);
+			}
+			foreach (PolyNetChunk c in newChunks) {
+				if (!loadedChunks.Exists (j => j == c)) {
+					c.addPlayer (this);
+					final.Add (c);
+				}
+			}
+			loadedChunks = final;
+		}
+
+		public void unloadChunks() {
+			foreach (PolyNetChunk c in loadedChunks) {
+				c.removePlayer (this);
 			}
 		}
-		loadedChunks = final;
 	}
 
-	public void unloadChunks() {
-		foreach (PolyNetChunk c in loadedChunks) {
-			c.removePlayer (this);
-		}
-	}
 }

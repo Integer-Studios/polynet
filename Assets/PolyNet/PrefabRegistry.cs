@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrefabRegistry : MonoBehaviour {
+namespace PolyNet {
 
-	public PolyNetIdentity[] prefabs;
+	public class PrefabRegistry : MonoBehaviour {
+
+		public PolyNetIdentity[] prefabs;
+
+	}
 
 }

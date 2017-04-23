@@ -3,37 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class PolyNetBehaviour : MonoBehaviour {
+namespace PolyNet {
 
-	private int scriptId;
-	protected PolyNetIdentity identity;
+	public class PolyNetBehaviour : MonoBehaviour {
 
-	public virtual int getInstanceId() {
-		return identity.getInstanceId();
+		private int scriptId;
+		protected PolyNetIdentity identity;
+
+		public virtual int getInstanceId() {
+			return identity.getInstanceId();
+		}
+
+		public int getScriptId() {
+			return scriptId;
+		}
+
+		public void setScriptId(int sid) {
+			scriptId = sid;
+		}
+
+		public void setIdentity(PolyNetIdentity i) {
+			identity = i;
+		}
+
+		public virtual void handleBehaviourPacket(PacketBehaviour p) {
+
+		}
+
+		public virtual void writeBehaviourSpawnData(ref BinaryWriter writer) {
+			
+		}
+
+		public virtual void readBehaviourSpawnData(ref BinaryReader reader) {
+			
+		}
+
 	}
 
-	public int getScriptId() {
-		return scriptId;
-	}
-
-	public void setScriptId(int sid) {
-		scriptId = sid;
-	}
-
-	public void setIdentity(PolyNetIdentity i) {
-		identity = i;
-	}
-
-	public virtual void handleBehaviourPacket(PacketBehaviour p) {
-
-	}
-
-	public virtual void writeBehaviourSpawnData(ref BinaryWriter writer) {
-		
-	}
-
-	public virtual void readBehaviourSpawnData(ref BinaryReader reader) {
-		
-	}
 
 }
