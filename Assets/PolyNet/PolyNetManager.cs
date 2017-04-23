@@ -12,14 +12,33 @@ public class PolyNetManager : MonoBehaviour {
 	public int playerId;
 	public float chunkSize;
 	public int chunkLoadRadius;
+	public int port = 0;
 	public PolyNetIdentity playerPrefab;
 
 	// Use this for initialization
 	void Awake () {
+
+		switch (port) {
+		case 0:
+			serverPort = 8888;
+			clientPort = 8889;
+			break;
+		case 1:
+			serverPort = 8890;
+			clientPort = 8891;
+			break;
+		case 2:
+			serverPort = 8892;
+			clientPort = 8893;
+			break;
+		}
+
 		if (isClient)
 			PolyClient.start (clientPort, serverPort, serverAddress);
-		else
+		else {
+			PolyNodeHandler.initialize (this);
 			PolyServer.start (serverPort);
+		}
 
 		PolyNetWorld.initialize (chunkSize, chunkLoadRadius, playerPrefab);
 
